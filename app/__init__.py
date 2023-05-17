@@ -10,6 +10,7 @@ import os
 
 def create_app(test_config=None):
     app = Flask(__name__)
+    app.config['UPLOAD_FOLDER'] = 'static/employees'
     with app.app_context():
         setup_db(app)
         CORS(app, origins='*')
@@ -21,7 +22,6 @@ def create_app(test_config=None):
         response.headers.add('Access-Control-Max-Age', '15')
         return response
     
-
     @app.route('/employees', methods=['POST'])
     def create_employee():
         first_name = request.form.get('first_name')
