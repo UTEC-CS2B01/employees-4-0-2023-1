@@ -1,12 +1,14 @@
 from flask import (
     Flask,
     request,
-    jsonify
+    jsonify,
+    abort
 )
 from .models import db, setup_db, Employee
 from .utils.utilities import allowed_file
 from flask_cors import CORS
 import os
+import sys
 
 def create_app(test_config=None):
     app = Flask(__name__)
@@ -24,44 +26,86 @@ def create_app(test_config=None):
     
     @app.route('/employees', methods=['POST'])
     def create_employee():
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
-        job_title = request.form.get('job_title')
-        department_id = request.form.get('selectDepartment')
+        error_code = 200
+        list_errors = []
+        try:
+            body = request.form
 
-        if 'image' not in request.files:
-            return jsonify({'success': False, 'message': 'No image provided'}), 400
-        
-        file = request.files['image']
+            if 'first_name' not in body:
+                list_errors.append('first_name is required')
+            else:
+                first_name = request.form.get('first_name')
 
-        if file.filename == '':
-            return jsonify({'success': False, 'message': 'No image provided'}), 400
-        
-        if not allowed_file(file.filename):
-            return jsonify({'success': False, 'message': 'File extension not allowed'}), 400
-        
+            if 'last_name' not in body:
+                list_errors.append('last_name is required')
+            else:
+                last_name = request.form.get('last_name')
 
-        employee = Employee(first_name, last_name, job_title, department_id)
-        db.session.add(employee)
-        db.session.commit()
-        
-        cwd = os.getcwd()
+            if 'job_title' not in body:
+                list_errors.append('job_title is required')
+            else:
+                job_title = request.form.get('job_title')
 
-        employee_dir = os.path.join(app.config['UPLOAD_FOLDER'], employee.id)
-        os.makedirs(employee_dir, exist_ok=True)
+            if 'selectDepartment' not in body:
+                list_errors.append('selectDepartment is required')
+            else:
+                department_id = request.form.get('selectDepartment')
 
-        upload_folder = os.path.join(cwd, employee_dir)
+            if 'image' not in request.files:
+                list_errors.append('image is required')
+            
+            file = request.files['image']
 
-        absolute_path = os.path.join(upload_folder, file.filename)
-        file.save(absolute_path)
-        file.close()
+            if file.filename == '':
+                list_errors.append('filename should not be empty')
+            
+            if not allowed_file(file.filename):
+                list_errors.append('File extension not allowed')
+            
 
-        relative_path = os.path.join(employee_dir, file.filename)
+            if len(list_errors) > 0:
+                error_code = 400
+            else:
+                employee = Employee(first_name, last_name, job_title, department_id)
+                db.session.add(employee)
+                db.session.commit()
+                employeeid_created = employee.id
+                
+                cwd = os.getcwd()
 
-        employee.image_path = relative_path
-        db.session.commit()
+                employee_dir = os.path.join(app.config['UPLOAD_FOLDER'], employee.id)
+                os.makedirs(employee_dir, exist_ok=True)
 
-        return jsonify({'success': True, 'id': employee.id, 'message': 'Employee created successfully'}), 201
+                upload_folder = os.path.join(cwd, employee_dir)
+
+                absolute_path = os.path.join(upload_folder, file.filename)
+                file.save(absolute_path)
+                file.close()
+
+                relative_path = os.path.join(employee_dir, file.filename)
+
+                employee.image_path = relative_path
+                db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print("e: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
+            error_code = 500
+
+
+        if error_code == 400:
+            return jsonify({'success': False, 'message': 'Error creating employee', 'errors': list_errors}), error_code
+        elif error_code == 500:
+            return jsonify({'success': False, 'message': 'Internal Server Error'}), error_code
+        else:
+            return jsonify({'success': True, 'id': employeeid_created, 'message': 'Employee created successfully'}), 201
+
+
+    @app.route('/employees', methods=['GET'])
+    def get_employees():
+        employees = Employee.query.filter_by(is_active=True).order_by(Employee.first_name).all()
+        return jsonify({'success': True, 'employees': [e.serialize() for e in employees]}), 200
+
 
 
     return app
