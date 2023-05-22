@@ -2,7 +2,7 @@ from flask import (
     Flask,
     request,
     jsonify,
-    abort
+    abort,
 )
 from .models import db, setup_db, Employee
 from .utils.utilities import allowed_file
@@ -52,15 +52,16 @@ def create_app(test_config=None):
                 department_id = request.form.get('selectDepartment')
 
             if 'image' not in request.files:
+                print('image is required')
                 list_errors.append('image is required')
-            
-            file = request.files['image']
+            else:
+                file = request.files['image']
 
-            if file.filename == '':
-                list_errors.append('filename should not be empty')
-            
-            if not allowed_file(file.filename):
-                list_errors.append('File extension not allowed')
+                if file.filename == '':
+                    list_errors.append('filename should not be empty')
+                
+                if not allowed_file(file.filename):
+                    list_errors.append('File extension not allowed')
             
 
             if len(list_errors) > 0:
@@ -91,7 +92,6 @@ def create_app(test_config=None):
             print("e: ", e)
             print("sys.exc_info(): ", sys.exc_info())
             error_code = 500
-
 
         if error_code == 400:
             return jsonify({'success': False, 'message': 'Error creating employee', 'errors': list_errors}), error_code
