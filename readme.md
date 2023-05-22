@@ -77,3 +77,13 @@ $ curl -X POST http://localhost:5004/employees
   "success": false
 }
 ```
+
+Tarea 24/05/2021
+1.- Implementar los endpoints de departmentos (GET/POST/PATCH/DELETE)
+2.- Implementar los endpoints de empleados (PATCH/DELETE)
+3.- Agregar sus respectivos CURLS en el archivo README.md
+4.- Tendran que crear un branch
+git checkout -b feature/tarea-24-05-2021-<username de gitbhub>
+git push
+
+Esto forma parte de la evaluacion continua de laboratorio
