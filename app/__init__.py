@@ -198,7 +198,7 @@ def create_app(test_config=None):
         db.session.commit()
         db.session.close()
 
-        return {'message': 'Departamento actualizado exitosamente'}
+        return jsonify({'success': True, 'message': 'Departamento actualizado exitosamente'})
     
     @app.route('/departments/<id>', methods=['DELETE'])
     def delete_department(id):
@@ -211,7 +211,7 @@ def create_app(test_config=None):
         db.session.commit()
         db.session.close()
 
-        return {'message': 'Departamento eliminado exitosamente'}
+        return jsonify({'success': True,'message': 'Departamento eliminado exitosamente'})
 
     return app
 
