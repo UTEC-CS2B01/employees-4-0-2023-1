@@ -93,10 +93,10 @@ Esto forma parte de la evaluacion continua de laboratorio
 | Nombre                            | Usuario       | Nota |
 | --------------------------------- | ------------- | ---- |
 | Christian Maxim Frisancho Mayorga | CHRISTIANUTEC | 05   |
-| Rohan Kumar Punjabi               | rkumar-lab    | -    |
+| Rohan Kumar Punjabi               | rkumar-lab    | 03   |
 | Arturo Magno Barrantes Chuquimia  | arturombc     | 18   |
 
 ### Tarea 2 - 25/05/2023
 
-- Van a investigar unittest
-- Testear los endpoints usando unittest
+- Implementar endpoint search de empleados, departamentos
+- Van a investigar la libreria unittest
