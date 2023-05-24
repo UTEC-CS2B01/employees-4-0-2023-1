@@ -87,3 +87,35 @@ git checkout -b feature/tarea-24-05-2021-<username de gitbhub>
 git push
 
 Esto forma parte de la evaluacion continua de laboratorio
+### Patch
+@app.route('/employees/change', methods=['PATCH'])
+curl -F "new_first_name=Christian" -F "new_last_name=Frisancho" -F "new_job_title=Medico" -F "new_employee.department_id=12" -X PATCH http://localhost:5004/employees
+  {
+    "message": "Empleado cambiado exitosamente"
+  }
+
+### Delete
+@app.route('/employees/borrar', methods=['DELETE'])
+curl -X DELETE http://localhost:5004/employees/12
+  {
+    "message": "Empleado eliminado exitosamente"
+  }
+
+### POST
+@app.route('/departments', methods=['POST'])
+curl -F "name=Suite" -F "short_name=S" - F"employees=1" -X POST http://localhost:5004/departments
+{
+  "message":"Departamento creado exitosamente"
+}
+### PATCH
+@app.route('/departments/new', methods=['PATCH'])
+curl -F "new_name=Suite Presidencial" -F "new_short_name=SP" -F "new_employees=2" -X PATCH http://localhost:5004/departments/3
+{
+  "message":"Departamento actualizado correctamente"
+}
+### DELETE
+@app.route('/departments/borrar', methods=['DELETE'])
+curl -X DELETE http://localhost:5004/departments/3
+{
+  "message":"Departamento eliminado correctamente"
+}
