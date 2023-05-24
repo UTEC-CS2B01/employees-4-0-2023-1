@@ -78,7 +78,7 @@ $ curl -X POST http://localhost:5004/employees
 }
 ```
 
-### Tarea 24/05/2021
+### Tarea 1 - 24/05/2023
 
 - Implementar los endpoints de departmentos (GET/POST/PATCH/DELETE)
 
@@ -92,6 +92,11 @@ Esto forma parte de la evaluacion continua de laboratorio
 
 | Nombre                            | Usuario       | Nota |
 | --------------------------------- | ------------- | ---- |
-| Christian Maxim Frisancho Mayorga | CHRISTIANUTEC | -    |
+| Christian Maxim Frisancho Mayorga | CHRISTIANUTEC | 05   |
 | Rohan Kumar Punjabi               | rkumar-lab    | -    |
-| Arturo Magno Barrantes Chuquimia  | arturombc     | -    |
+| Arturo Magno Barrantes Chuquimia  | arturombc     | 18   |
+
+### Tarea 2 - 25/05/2023
+
+- Van a investigar unittest
+- Testear los endpoints usando unittest
