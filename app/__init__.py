@@ -155,7 +155,7 @@ def create_app(test_config=None):
         if error_code == 500:
             return jsonify({'success': False, 'message': 'Internal Server Error'}), error_code
         else:
-            return jsonify({'success': True, 'message': 'Empleado eliminado exitosamente'}), 200
+            return jsonify({'success': True, 'message': 'Empleado eliminado exitosamente'}), error_code
 
 
     @app.route('/departments', methods=['POST'])
@@ -187,63 +187,64 @@ def create_app(test_config=None):
                 db.session.commit()
                 department_created = department_e.id
                 
-            if error_code == 400:
-                return jsonify({'success': False, 'message': 'Error creating department', 'errors': list_errors}), error_code
-            elif error_code == 500:
-                return jsonify({'success': False, 'message': 'Internal Server Error'}), error_code
-            else:
-                return jsonify({'success': True, 'id': department_created, 'message': 'Departamento creado exitosamente'}), 201
-
+ 
         except Exception as e:
             db.session.rollback()
             print("e: ", e)
             print("sys.exc_info(): ", sys.exc_info())
             error_code = 500
+        
+        if error_code == 400:
+            return jsonify({'success': False, 'message': 'Error creating department', 'errors': list_errors}), error_code
+        elif error_code == 500:
             return jsonify({'success': False, 'message': 'Internal Server Error'}), error_code
+        else:
+            return jsonify({'success': True, 'id': department_created, 'message': 'Departamento creado exitosamente'}), 201
+
 
     @app.route('/departments', methods=['GET'])
     def get_departments():
         departments = Department.query.all()
         return jsonify({'success': True, 'employees': [e.serialize() for e in departments]}), 200
 
-    @app.route('/departments/new', methods=['PATCH'])
+    @app.route('/departments/<department_id>', methods=['PATCH'])
     def update_department(department_id):
-        error_code = 200
-        list_errors = []
+        returned_code = 200
         try:
-            new_department = Department.query.get(department_id)
-            if department is None:
-                return jsonify({'success': False, 'message': 'Departamento no encontrado'}), 404
-
+            department = Department.query.get(department_id)
             body = request.form
             if 'name' in body:
-                new_department.name = request.form.get('name')
+                department.name = request.form.get('name')
             
             if 'short_name' in body:
-                new_department.short_name = request.form.get('short_name')
+                department.short_name = request.form.get('short_name')
             
             if 'employees' in body:
-                new_department.employees = request.form.get('employees')
+                department.employees = request.form.get('employees')
 
             db.session.commit()
-
-            return jsonify({'success': True, 'message': 'Departamento actualizado correctamente'}), 200
 
         except Exception as e:
             db.session.rollback()
             print("e: ", e)
             print("sys.exc_info(): ", sys.exc_info())
-            error_code = 500
-            return jsonify({'success': False, 'message': 'Internal Server Error'}), error_code
+            returned_code = 500
+            return jsonify({'success': False, 'message': 'Internal Server Error'}), returned_code
+        
+        if returned_code == 500:
+            return jsonify({'success': False, 'message': 'Internal Server Error'}), returned_code
+        else:
+            return jsonify({'success': True, 'message': 'Departamento actualizado correctamente'}), returned_code
+    
 
-    @app.route('/departments/borrar', methods=['DELETE'])
+
+    @app.route('/departments/<department_id>', methods=['DELETE'])
     def delete_department(department_id):
         error_code=200
         try:        
             department = Department.query.get(department_id)
             db.session.delete(department)
             db.session.commit()
-            return jsonify({"message": "Departamento eliminado correctamente"})
         except Exception as e:
             db.session.rollback()
             print("e: ", e)
@@ -252,7 +253,7 @@ def create_app(test_config=None):
         if error_code == 500:
             return jsonify({'success': False, 'message': 'Internal Server Error'}), error_code
         else:
-            return jsonify({'success': True, 'message': 'Departamento eliminado exitisamente'}), 200
+            return jsonify({'success': True, 'message': 'Departamento eliminado exitisamente'}), error_code
 
         
 

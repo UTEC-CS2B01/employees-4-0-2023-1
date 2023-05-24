@@ -54,9 +54,13 @@ class Department(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()), server_default=db.text('uuid_generate_v4()'))
     name = db.Column(db.String(120), nullable=False)
     short_name = db.Column(db.String(20), nullable=False)
-    created_at = db.Column(db.DateTime(timezone=True), nullable=False, server_default=db.text('now()'))
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.utcnow,server_default=db.text('now()'))
     modified_at = db.Column(db.DateTime(timezone=True), nullable=True, onupdate=datetime.utcnow, server_default=db.text('now()'))
     employees = db.relationship('Employee', backref='department', lazy=True)
+
+    def __init__(self, name, short_name):
+        self.name = name
+        self.short_name = short_name
 
     def serialize(self):
         return {
