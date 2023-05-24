@@ -105,7 +105,7 @@ def create_app(test_config=None):
         employees = Employee.query.filter_by(is_active=True).order_by(Employee.first_name).all()
         return jsonify({'success': True, 'employees': [e.serialize() for e in employees]}), 200
 
-    @app.route('/employees', methods=['PATCH'])
+    @app.route('/employees/<id>', methods=['PATCH'])
     def update_employee(id):
         employee = Employee.query.get(id)
 
@@ -127,7 +127,7 @@ def create_app(test_config=None):
 
         return {'message': 'Empleado actualizado correctamente'}, 200
 
-    @app.route('/employees', methods=['DELETE'])
+    @app.route('/employees/<id>', methods=['DELETE'])
     def delete_employee(id):
         employee = Employee.query.get(id)
 
@@ -174,16 +174,15 @@ def create_app(test_config=None):
             print("sys.exc_info(): ", sys.exc_info())
             error_code = 500
 
-        finally:
-            db.session.close()
-            if error_code == 400:
-                return jsonify({'success': False, 'message': 'Error creating department', 'errors': list_errors}), error_code
-            elif error_code == 500:
-                return jsonify({'success': False, 'message': 'Internal Server Error'}), error_code
-            else:
-                return jsonify({'success': True, 'id': department.id, 'message': 'Department created successfully'}), 201
+        
+        if error_code == 400:
+            return jsonify({'success': False, 'message': 'Error creating department', 'errors': list_errors}), error_code
+        elif error_code == 500:
+            return jsonify({'success': False, 'message': 'Internal Server Error'}), error_code
+        else:
+            return jsonify({'success': True, 'id': department.id, 'name':department.name, 'short_name':department.short_name ,'message': 'Department created successfully'}), 201
 
-    @app.route('/departments', methods=['PATCH'])
+    @app.route('/departments/<id>', methods=['PATCH'])
     def update_department(id):
         department = Department.query.get(id)
 
@@ -201,7 +200,7 @@ def create_app(test_config=None):
 
         return {'message': 'Departamento actualizado exitosamente'}
     
-    @app.route('/departments', methods=['DELETE'])
+    @app.route('/departments/<id>', methods=['DELETE'])
     def delete_department(id):
         department = Department.query.get(id)
 
