@@ -106,41 +106,40 @@ def create_app(test_config=None):
         employees = Employee.query.filter_by(is_active=True).order_by(Employee.first_name).all()
         return jsonify({'success': True, 'employees': [e.serialize() for e in employees]}), 200
 
-    @app.route('/employees/change', methods=['PATCH'])
+    @app.route('/employees/<employee_id>', methods=['PATCH'])
     def update_employee(employee_id):
-        error_code = 200
-        list_errors = []
+        returned_code = 200
         try:
             body = request.form
 
-            new_employee = Employee.query.get(employee_id)
+            employee = Employee.query.get(employee_id)
 
             if 'first_name' in body:
-                new_employee.first_name = request.form.get('first_name')
+                employee.first_name = request.form.get('first_name')
 
             if 'last_name' in body:
-                new_employee.last_name = request.form.get('last_name')
+                employee.last_name = request.form.get('last_name')
 
             if 'job_title' in body:
-                new_employee.job_title = request.form.get('job_title')
+                employee.job_title = request.form.get('job_title')
 
             if 'selectDepartment' in body:
-                new_employee.department_id = request.form.get('selectDepartment')
+                employee.department_id = request.form.get('selectDepartment')
 
             db.session.commit()
         except Exception as e:
             db.session.rollback()
             print("e: ", e)
             print("sys.exc_info(): ", sys.exc_info())
-            error_code = 500
+            returned_code = 500
 
-        if error_code == 500:
-            return jsonify({'success': False, 'message': 'Internal Server Error'}), error_code
+        if returned_code == 500:
+            return jsonify({'success': False, 'message': 'Internal Server Error'}), returned_code
         else:
-            return jsonify({'success': True, 'message': 'Empleado cambiado exitosamente'}), 200
+            return jsonify({'success': True, 'message': 'Empleado cambiado exitosamente'}), returned_code
     
     
-    @app.route('/employees/borrar', methods=['DELETE'])
+    @app.route('/employees/<employee_id>', methods=['DELETE'])
     def delete_employee(employee_id):
         error_code = 200
         try:
