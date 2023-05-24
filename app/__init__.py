@@ -4,7 +4,7 @@ from flask import (
     jsonify,
     abort,
 )
-from .models import db, setup_db, Employee
+from .models import db, setup_db, Employee, Department
 from .utils.utilities import allowed_file
 from flask_cors import CORS
 import os
@@ -100,13 +100,119 @@ def create_app(test_config=None):
         else:
             return jsonify({'success': True, 'id': employeeid_created, 'message': 'Employee created successfully'}), 201
 
-
     @app.route('/employees', methods=['GET'])
     def get_employees():
         employees = Employee.query.filter_by(is_active=True).order_by(Employee.first_name).all()
         return jsonify({'success': True, 'employees': [e.serialize() for e in employees]}), 200
 
+    @app.route('/employees', methods=['PATCH'])
+    def update_employee(id):
+        employee = Employee.query.get(id)
 
+        if not employee:
+            return {'message': 'Empleado no encontrado'}, 404
+
+        data = request.form
+
+        if 'first_name' in data:
+            employee.first_name = data['first_name']
+        if 'last_name' in data:
+            employee.last_name = data['last_name']
+        if 'job_title' in data:
+            employee.job_title = data['job_title']
+        if 'selectDepartment' in data:
+            employee.department_id = data['selectDepartment']
+        db.session.commit()
+        db.session.close()
+
+        return {'message': 'Empleado actualizado correctamente'}, 200
+
+    @app.route('/employees', methods=['DELETE'])
+    def delete_employee(id):
+        employee = Employee.query.get(id)
+
+        if not employee:
+            return {'message': 'Empleado no encontrado'}, 404
+
+        employee.is_active = False
+        db.session.commit()
+        db.session.close()
+
+        return {'message': 'Empleado eliminado correctamente'}, 200
+
+    @app.route('/departments', methods=['GET'])
+    def get_departments():
+        departments = Department.query.order_by(Department.short_name).all()
+        return jsonify({'success': True, 'departments': [d.serialize() for d in departments]}), 200
+
+    @app.route('/departments', methods=['POST'])
+    def create_department():
+        error_code = 200
+        list_errors = []
+        try:
+            body = request.form
+
+            if 'name' not in body:
+                list_errors.append('name is required')
+            else:
+                name = body.get('name')
+
+            if 'short_name' not in body:
+                list_errors.append('short_name is required')
+            else:
+                short_name = body.get('short_name')
+
+            if len(list_errors) > 0:
+                error_code = 400
+            else:
+                department = Department(name, short_name)
+                db.session.add(department)
+                db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print("e: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
+            error_code = 500
+
+        finally:
+            db.session.close()
+            if error_code == 400:
+                return jsonify({'success': False, 'message': 'Error creating department', 'errors': list_errors}), error_code
+            elif error_code == 500:
+                return jsonify({'success': False, 'message': 'Internal Server Error'}), error_code
+            else:
+                return jsonify({'success': True, 'id': department.id, 'message': 'Department created successfully'}), 201
+
+    @app.route('/departments', methods=['PATCH'])
+    def update_department(id):
+        department = Department.query.get(id)
+
+        if not department:
+            return {'message': 'Departamento no encontrado'}, 404
+
+        data = request.form
+
+        if 'name' in data:
+            department.name = data['name']
+        if 'short_name' in data:
+            department.short_name = data['short_name']
+        db.session.commit()
+        db.session.close()
+
+        return {'message': 'Departamento actualizado exitosamente'}
+    
+    @app.route('/departments', methods=['DELETE'])
+    def delete_department(id):
+        department = Department.query.get(id)
+
+        if not department:
+            return {'message': 'Departamento no encontrado'}, 404
+
+        db.session.delete(department)
+        db.session.commit()
+        db.session.close()
+
+        return {'message': 'Departamento eliminado exitosamente'}
 
     return app
 
