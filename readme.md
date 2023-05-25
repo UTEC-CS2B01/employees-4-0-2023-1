@@ -249,3 +249,4 @@ curl -X DELETE http://localhost:5004/employees/1
 
 - Implementart los archivos testDepartments y testEmployees
 - Crear un branch con el nombre feature/tarea-29-05-2023-<username>
+- Crear PR, y luego si pasan los dos approves, entonces hagan merge al master
