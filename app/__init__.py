@@ -103,8 +103,26 @@ def create_app(test_config=None):
 
     @app.route('/employees', methods=['GET'])
     def get_employees():
-        employees = Employee.query.filter_by(is_active=True).order_by(Employee.first_name).all()
-        return jsonify({'success': True, 'employees': [e.serialize() for e in employees]}), 200
+        try:
+            keyword = request.args.get('keyword',None)
+            if keyword:
+                employees = Employee.query.filter(
+                    (Employee.first_name.ilike('%{}%'.format(keyword))) 
+                    (Employee.last_name.ilike('%{}%'.format(keyword)))
+                    (Employee.job_title.ilike('%{}%'.format(keyword)))
+                ).all()
+                return jsonify({'success': True, 'employees': [e.serialize() for e in employees]}), 200
+
+            employees = Employee.query.filter_by(is_active=True).order_by(Employee.first_name).all()
+            return jsonify({'success': True, 'employees': [e.serialize() for e in employees]}), 200
+
+            
+        except Exception as e:
+            db.session.rollback()
+            print("e: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
+            error_code = 500
+        
 
     @app.route('/employees/<employee_id>', methods=['PATCH'])
     def update_employee(employee_id):
@@ -159,25 +177,6 @@ def create_app(test_config=None):
         else:
             return jsonify({'success': True, 'message': 'Empleado eliminado exitosamente'}), error_code
 
-    @app.route('/employees/keyword', methods=['GET'])
-    def search_employees():
-        error_code=200
-        keyword = request.args.get('keyword')
-        if not keyword:
-            error_code=400
-            return jsonify({'success': False, 'message': 'No se ha dado parametro de busqueda'}), error_code
-        
-        employees = Employee.query.filter(
-            (Employee.first_name.ilike(f'%{keyword}%')) 
-            (Employee.last_name.ilike(f'%{keyword}%'))
-            (Employee.job_title.ilike(f'%{kewyword}'))
-        ).all()
-        
-        if employees:
-            error_code=404
-            return jsonify({'success': False, 'message': 'No se encontro ningun empleado'}), error_code
-        else:
-            return jsonify({'success': True, 'employees': [e.serialize() for e in employees]}), error_code
 
 
     @app.route('/departments', methods=['POST'])
@@ -226,8 +225,24 @@ def create_app(test_config=None):
 
     @app.route('/departments', methods=['GET'])
     def get_departments():
-        departments = Department.query.all()
-        return jsonify({'success': True, 'employees': [e.serialize() for e in departments]}), 200
+        try:
+            keyword = request.args.get('keyword',None)
+            if keyword:
+                departments = Department.query.filter(
+                (Department.name.ilike('%{}%'.format(keyword))) |
+                (Department.short_name.ilike('%{}%'.format(keyword)))
+                ).all()
+                return jsonify({'success': True, 'employees': [e.serialize() for e in departments]}), 200
+
+            departments = Department.query.all()
+            return jsonify({'success': True, 'employees': [e.serialize() for e in departments]}), 200
+            
+        except Exception as e:
+            db.session.rollback()
+            print("e: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
+            error_code = 500
+
 
     @app.route('/departments/<department_id>', methods=['PATCH'])
     def update_department(department_id):
