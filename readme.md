@@ -235,5 +235,5 @@ curl -X GET http://localhost:5004/employees/1
 
 ### Search DEPARTMENT
 
-curl -X GET http://localhost:5000/departments/1
+curl -X GET http://localhost:5004/departments/1
 
