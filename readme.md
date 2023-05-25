@@ -100,3 +100,25 @@ Esto forma parte de la evaluacion continua de laboratorio
 
 - Implementar endpoint search de empleados, departamentos
 - Van a investigar la libreria unittest
+
+
+
+# Test endpoints:
+
+#### GET /search/employees
+
+### success
+
+```
+    curl -X GET -d "search=xxxxxx" http://localhost:5000/search/employees
+```
+
+
+
+#### GET /search/departamnets
+
+### success
+
+```
+    curl -X GET -d "search=xxxxx" http://localhost:5000/search/departaments
+```

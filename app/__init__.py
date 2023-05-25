@@ -4,7 +4,7 @@ from flask import (
     jsonify,
     abort,
 )
-from .models import db, setup_db, Employee
+from .models import db, setup_db, Employee,Department
 from .utils.utilities import allowed_file
 from flask_cors import CORS
 import os
@@ -106,7 +106,21 @@ def create_app(test_config=None):
         employees = Employee.query.filter_by(is_active=True).order_by(Employee.first_name).all()
         return jsonify({'success': True, 'employees': [e.serialize() for e in employees]}), 200
 
+    @app.route('/search/employees', methods=['GET'])
+    def get_employees():
+        i_search = request.form.get("search")
+        search = "%{}%".format(i_search)
+        employees = Employee.query.filter(Employee.first_name.like(search)).all()
+        if employees:
+            return jsonify({'success': True, 'employees': [e.serialize() for e in employees]}), 200
+        return jsonify({'success': False, 'message': 'no existen departamentos'})
 
 
-    return app
-
+    @app.route('/search/departaments', methods=['GET'])
+    def get_employees():
+        i_search = request.form.get("search")
+        search = "%{}%".format(i_search)
+        departaments = Department.query.filter(Department.name.like(search)).all()
+        if departaments :
+            return jsonify({'success': True, 'departament': [e.serialize() for e in departaments]}), 200
+        return jsonify({'success': False, 'message': 'no existen departamentos'})
