@@ -90,47 +90,53 @@ git push
 
 Esto forma parte de la evaluacion continua de laboratorio
 
-#Tarea Renzo
+####Tarea Renzo
 
 #### Get/departments
 
 ```
 curl -X GET http://localhost:5004/departments
-
+    
 ```
 
 #### POST/departments
 
 ```
-
-  curl -F "name=Departamento de Ventas" -F "short_name=DV" -X POST http://localhost:5004/departments
-
-  {
-
-  }
+  curl -F "name=Double" -F "short_name=D" -X POST http://localhost:5004/departments
 
 ```
 
-#### Patch/departaments
+#### Patch/Departaments
 
-@app.route('/departments/<deparmentid>', methods=['PATCH'])
-curl -X PATCH -H "Content-Type: application/json" -d '{"name": "Nuevo nombre", "short_name": "NN"}' http://localhost:5004/departments/48a8-bf23-89b785ed3285
+@app.route('/departments/<deparments/<id>', methods=['PATCH'])
+    
+curl -X PATCH -H "Content-Type: application/json" -d '{"name": "Nuevo nombre", "short_name": "NN"}'
+
+http://localhost:5004/departments/2a0b0877-070c-4510-aBa2-cff3b3c110bd
+    
 { "message": "Departamente editado correctamente" }
+    
+#### Delete/Departments
 
-#### Delete/departments
-
-@app.route('/departments/<deparmentid>', methods=['DELETE'])
-curl -X DELETE http://localhost:5004/departments/48a8-bf23-89b785ed3285
+@app.route('/departments/<id>', methods=['DELETE'])
+    
+curl -X DELETE http://localhost:5004/departments/2a0b0877-070c-4510-aBa2-cff3b3c110bd
+    
 { "message": "Departamente eliminado correctamente" }
 
 #### Patch/Employees
 
-@app.route('/employees/change', methods=['PATCH']) 
-curl -F "first_name=Renzo" -F "last_name=Acervo" -F "new_job_title=Medico" -F "new_employee.department_id=48a8-bf23-89b785ed3285" -X PATCH http://localhost:5004/employees 
+@app.route('/employees/<id>', methods=['PATCH']) 
+    
+curl -F "first_name=Renzo" -F "last_name=Acervo" -F "new_job_title=Medico" -F "new_employee.department_id=2a0b0877-070c-4510-aBa2-cff3b3c110bd" 
+-X PATCH http://localhost:5004/employees 
+    
 { "message": "Empleado editado correctamente" }
 
 #### Delete/Employees
 
 @app.route('/employees/<employeeid>', methods=['DELETE'])
-curl -X DELETE http://localhost:5004/employees/48a8-bf23-89b785ed3285 
+
+curl -X DELETE http://localhost:5004/employees/2a0b0877-070c-4510-aBa2-cff3b3c110bd
+
 { "message": "Empleado eliminado correctamente" }
