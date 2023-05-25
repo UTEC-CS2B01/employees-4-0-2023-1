@@ -110,7 +110,7 @@ def create_app(test_config=None):
         employee = Employee.query.get(id)
 
         if not employee:
-            return jsonify({'success':False,'message': 'Empleado no encontrado'}), 404
+            return {'message': 'Empleado no encontrado'}, 404
 
         data = request.form
 
@@ -125,20 +125,20 @@ def create_app(test_config=None):
         db.session.commit()
         db.session.close()
 
-        return jsonify({'success':True,'message': 'Empleado actualizado correctamente'}), 200
+        return {'message': 'Empleado actualizado correctamente'}, 200
 
     @app.route('/employees/<id>', methods=['DELETE'])
     def delete_employee(id):
         employee = Employee.query.get(id)
 
         if not employee:
-            return jsonify({'success':False,'message': 'Empleado no encontrado'}), 404
+            return {'message': 'Empleado no encontrado'}, 404
 
         employee.is_active = False
         db.session.commit()
         db.session.close()
 
-        return jsonify({'success':True,'message': 'Empleado eliminado correctamente'}), 200
+        return {'message': 'Empleado eliminado correctamente'}, 200
 
     @app.route('/departments', methods=['GET'])
     def get_departments():
@@ -187,7 +187,7 @@ def create_app(test_config=None):
         department = Department.query.get(id)
 
         if not department:
-            return jsonify({'message': 'Departamento no encontrado'}), 404
+            return {'message': 'Departamento no encontrado'}, 404
 
         data = request.form
 
@@ -205,7 +205,7 @@ def create_app(test_config=None):
         department = Department.query.get(id)
 
         if not department:
-            return jsonify({'message': 'Departamento no encontrado'}), 404
+            return {'message': 'Departamento no encontrado'}, 404
 
         db.session.delete(department)
         db.session.commit()
@@ -213,5 +213,30 @@ def create_app(test_config=None):
 
         return jsonify({'success': True,'message': 'Departamento eliminado exitosamente'})
 
-    return app
+    # Endpoint para buscar un empleado por ID
+    @app.route('/employees/<int:employee_id>', methods=['GET'])
+    def search_employee(employee_id):
+        employee = next((emp for emp in employees if emp['id'] == employee_id), None)
 
+        if employee:
+            return jsonify(employee)
+        else:
+            return jsonify({'message': 'Employee no encontrado'}), 404
+        
+        db.session.commit()
+        db.session.close()
+
+
+    # Endpoint para buscar un departamento por ID
+    @app.route('/departments/<int:department_id>', methods=['GET'])
+    def get_department(department_id):
+        department = next((dept for dept in departments if dept['id'] == department_id), None)
+        if department:
+            return jsonify(department)
+        else:
+            return jsonify({'message': 'Departamento no encontrado'}), 404
+
+        db.session.commit()
+        db.session.close()
+
+    return app
