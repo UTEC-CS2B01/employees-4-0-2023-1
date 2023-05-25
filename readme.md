@@ -232,16 +232,20 @@ curl -X DELETE http://localhost:5004/employees/1
 ```
 
 | Nombre                            | Usuario       | Nota |
-|-----------------------------------|---------------|------|
+| --------------------------------- | ------------- | ---- |
 | Christian Maxim Frisancho Mayorga | CHRISTIANUTEC | 05   |
 | Rohan Kumar Punjabi               | rkumar-lab    | 03   |
 | Arturo Magno Barrantes Chuquimia  | arturombc     | 18   |
-|                                   | jonyyy1       |      |
+| Jonathan Quilca Valenzuela        | jonyyy1       |      |
 |                                   | Martin3007    |      |
-|                                   | RenzoA21      |      |
+| Renzo Alfonso Acervo Correa       | RenzoA21      |      |
 
 ### Tarea 2 - 25/05/2023
 
 - Implementar endpoint search de empleados, departamentos
 - Van a investigar la libreria unittest
 
+### Tarea 3 - 29/05/2023
+
+- Implementart los archivos testDepartments y testEmployees
+- Crear un branch con el nombre feature/tarea-29-05-2023-<username>
