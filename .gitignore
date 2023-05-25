@@ -1,0 +1,5 @@
+# Se ignoran los archivos .pycache
+*.pyc
+*__pycache__/
+.idea/
+
