@@ -102,8 +102,22 @@ def create_app(test_config=None):
 
     @app.route('/employees', methods=['GET'])
     def get_employees():
-        employees = Employee.query.filter_by(is_active=True).order_by(Employee.first_name).all()
-        return jsonify({'success': True, 'employees': [e.serialize() for e in employees]}), 200
+        
+        try:
+            search_query = request.args.get('query', None)
+            if search_query:
+                employees = Employee.query.filter_by(is_active=True).filter(Employee.first_name.ilike('%{}%'.format(search_query)))\
+                    .order_by(Employee.first_name).all()
+                
+                return jsonify({'success': True, 'employees': [e.serialize() for e in employees], 'total': len(employees)}), 200
+
+            employees = Employee.query.filter_by(is_active=True).order_by(Employee.first_name).all()
+            return jsonify({'success': True, 'employees': [e.serialize() for e in employees]}), 200
+        except Exception as e:
+            print("e: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
+            db.session.rollback()
+            return jsonify({'success': False, 'message': 'Internal Server Error'}), 500
 
     @app.route('/employees/<id>', methods=['PATCH'])
     def update_employee(id):
@@ -142,9 +156,27 @@ def create_app(test_config=None):
 
     @app.route('/departments', methods=['GET'])
     def get_departments():
-        departments = Department.query.order_by(Department.short_name).all()
-        return jsonify({'success': True, 'departments': [d.serialize() for d in departments]}), 200
+        try:
+            search_query = request.args.get('query', None)
+            if search_query:
+                departments = Department.query.filter(
+                    db.or_(Department.name.ilike('%{}%'.format(search_query)),
+                            Department.short_name.ilike('%{}%'.format(search_query)))    
+                ).all()
 
+                return jsonify({'success': True, 'departments': [d.serialize() for d in departments], 'total': len(departments)}), 200
+
+            departments = Department.query.order_by(Department.short_name).all()
+            return jsonify({'success': True, 'departments': [d.serialize() for d in departments]}), 200
+
+
+        except Exception as e:
+            print("e: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
+            db.session.rollback()
+            return jsonify({'success': False, 'message': 'Internal Server Error'}), 500
+             
+        
     @app.route('/departments', methods=['POST'])
     def create_department():
         error_code = 200
