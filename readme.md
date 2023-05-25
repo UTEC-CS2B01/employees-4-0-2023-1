@@ -78,13 +78,15 @@ $ curl -X POST http://localhost:5004/employees
 }
 ```
 
-Tarea 24/05/2021
-1.- Implementar los endpoints de departmentos (GET/POST/PATCH/DELETE)
-2.- Implementar los endpoints de empleados (PATCH/DELETE)
-3.- Agregar sus respectivos CURLS en el archivo README.md
-4.- Tendran que crear un branch
-git checkout -b feature/tarea-24-05-2021-<username de gitbhub>
-git push
+### Tarea 1 - 24/05/2023
+
+- Implementar los endpoints de departmentos (GET/POST/PATCH/DELETE)
+
+- Implementar los endpoints de empleados (PATCH/DELETE)
+- Agregar sus respectivos CURLS en el archivo README.md
+- Tendran que crear un branch
+- git checkout -b feature/tarea-24-05-2023-<username>
+- git push
 
 Esto forma parte de la evaluacion continua de laboratorio
 
@@ -228,3 +230,18 @@ curl -X DELETE http://localhost:5004/employees/1
     "message": "Empleado no encontrado"
   }
 ```
+
+| Nombre                            | Usuario       | Nota |
+|-----------------------------------|---------------|------|
+| Christian Maxim Frisancho Mayorga | CHRISTIANUTEC | 05   |
+| Rohan Kumar Punjabi               | rkumar-lab    | 03   |
+| Arturo Magno Barrantes Chuquimia  | arturombc     | 18   |
+|                                   | jonyyy1       |      |
+|                                   | Martin3007    |      |
+|                                   | RenzoA21      |      |
+
+### Tarea 2 - 25/05/2023
+
+- Implementar endpoint search de empleados, departamentos
+- Van a investigar la libreria unittest
+
