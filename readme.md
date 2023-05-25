@@ -94,17 +94,12 @@ Esto forma parte de la evaluacion continua de laboratorio
 
 #### Get/departments
 
-```
 curl -X GET http://localhost:5004/departments
     
-```
 
 #### POST/departments
 
-```
   curl -F "name=Double" -F "short_name=D" -X POST http://localhost:5004/departments
-
-```
 
 #### Patch/Departaments
 
