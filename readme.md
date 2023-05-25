@@ -88,6 +88,152 @@ git push
 
 Esto forma parte de la evaluacion continua de laboratorio
 
+## Arturo task
 
+### GET /Departments
 
-Tengo que implementar los endpoints sino tengo 0
+@app.route('/departments', methods=['GET'])
+
+##### success
+
+```
+    curl -X GET http://localhost:5004/departments
+```
+
+### POST /Departments
+
+@app.route('/departments', methods=['POST'])
+
+##### success
+
+```
+  curl -F "name=Departamento de Ventas" -F "short_name=DV" -X POST http://localhost:5004/departments
+
+  {
+    "id": "3e65eddc-3d69-48a8-bf23-89b785ed3285",
+    "message": "Department created successfully",
+    "name": "Departamento de Ventas",
+    "short_name": "DV",
+    "success": true
+  }
+```
+
+##### failed
+
+curl -X POST http://localhost:5004/departments
+
+```
+  {
+    "errors": [
+      "name is required",
+      "short_name is required"
+    ],
+    "message": "Error creating department",
+    "success": false
+  }
+```
+
+### PATCH /Departments
+
+@app.route('/departments/\<id>', methods=['PATCH'])
+
+##### success
+
+curl -F "name=Departamento de Ventas patch" -F "short_name=DV_patch" -X PATCH http://localhost:5004/departments/3e65eddc-3d69-48a8-bf23-89b785ed3285
+
+```
+  {
+    "message": "Departamento actualizado exitosamente"
+  }
+```
+
+##### failed
+
+curl -X PATCH http://localhost:5004/departments/1
+
+```
+  {
+  "message": "Departamento no encontrado"
+  }
+```
+
+### DELETE /Departments
+
+@app.route('/departments/\<id>', methods=['DELETE'])
+
+##### success
+
+curl -X DELETE http://localhost:5004/departments/3e65eddc-3d69-48a8-bf23-89b785ed3285
+
+```
+  {
+    "message": "Departamento eliminado exitosamente"
+  }
+```
+
+##### failed
+
+curl -X DELETE http://localhost:5004/departments/1
+
+```
+  {
+  "message": "Departamento no encontrado"
+  }
+```
+
+### PATCH /Employees
+
+@app.route('/employees/\<id>', methods=['PATCH'])
+
+##### success
+
+curl -F "first_name=Arturo" -F "last_name=Magno" -F "job_title=Bioingeniero" -F "selectDepartment=812e31fc-53f4-4218-ba63-32229b9efc13" -X PATCH http://localhost:5004/employees/93554847-8619-4352-9e3e-f82d0d822da4
+
+```
+  {
+    "message": "Empleado actualizado correctamente"
+  }
+```
+
+##### failed
+
+curl -F "first_name=Arturo" -F "last_name=Magno" -F "job_title=Bioingeniero" -F "selectDepartment=812e31fc-53f4-4218-ba63-32229b9efc13" -X PATCH http://localhost:5004/employees/1
+
+```
+  {
+    "message": "Empleado no encontrado"
+  }
+```
+
+### DELETE /Employees
+
+@app.route('/employees/\<id>', methods=['DELETE'])
+
+##### success
+
+curl -X DELETE http://localhost:5004/employees/93554847-8619-4352-9e3e-f82d0d822da4
+
+```
+  {
+    "message": "Empleado eliminado correctamente"
+  }
+```
+
+##### failed
+
+curl -X DELETE http://localhost:5004/employees/1
+
+```
+  {
+    "message": "Empleado no encontrado"
+  }
+```
+
+### Search EMPLOYEES
+
+curl -X GET http://localhost:5004/employees/1
+
+### Search DEPARTMENT
+
+curl -X GET http://localhost:5000/departments/1
+
