@@ -125,6 +125,8 @@ def create_app(test_config=None):
 
             if 'selectDepartment' in body:
                 employee.department_id = request.form.get('selectDepartment')
+            if 'image' in body:
+                employee.image_path=request.form.get('image')
 
             db.session.commit()
         except Exception as e:
@@ -156,6 +158,26 @@ def create_app(test_config=None):
             return jsonify({'success': False, 'message': 'Internal Server Error'}), error_code
         else:
             return jsonify({'success': True, 'message': 'Empleado eliminado exitosamente'}), error_code
+
+    @app.route('/employees/keyword', methods=['GET'])
+    def search_employees():
+        error_code=200
+        keyword = request.args.get('keyword')
+        if not keyword:
+            error_code=400
+            return jsonify({'success': False, 'message': 'No se ha dado parametro de busqueda'}), error_code
+        
+        employees = Employee.query.filter(
+            (Employee.first_name.ilike(f'%{keyword}%')) 
+            (Employee.last_name.ilike(f'%{keyword}%'))
+            (Employee.job_title.ilike(f'%{kewyword}'))
+        ).all()
+        
+        if employees:
+            error_code=404
+            return jsonify({'success': False, 'message': 'No se encontro ningun empleado'}), error_code
+        else:
+            return jsonify({'success': True, 'employees': [e.serialize() for e in employees]}), error_code
 
 
     @app.route('/departments', methods=['POST'])
@@ -257,4 +279,23 @@ def create_app(test_config=None):
 
         
 
+    
+    @app.route('/departments/keyword', methods=['GET'])
+    def search_departments():
+        error_code=200
+        keyword = request.args.get('keyword')
+        if not keyword:
+            error_code=400
+            return jsonify({'success': False, 'message': 'No se dio ningun filtro para buscar'}), error_code
+        
+        departments = Department.query.filter(
+            (Department.name.ilike(f'%{keyword}%')) |
+            (Department.short_name.ilike(f'%{keyword}%'))
+        ).all()
+        
+        if departments:
+            error_code=404
+            return jsonify({'success': True, 'departments': [d.serialize() for d in departments]}), error_code
+        else:
+            return jsonify({'success': False, 'message': 'Departamento no encontrado'}), error_code
     return app
