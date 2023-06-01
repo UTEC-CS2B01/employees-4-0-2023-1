@@ -14,7 +14,7 @@ def create_app(test_config=None):
     app = Flask(__name__)
     app.config['UPLOAD_FOLDER'] = 'static/employees'
     with app.app_context():
-        setup_db(app)
+        setup_db(app, test_config['database_qa'] if test_config else None)
         CORS(app, origins='*')
 
     @app.after_request
@@ -179,10 +179,10 @@ def create_app(test_config=None):
         
     @app.route('/departments', methods=['POST'])
     def create_department():
-        error_code = 200
+        error_code = 201
         list_errors = []
         try:
-            body = request.form
+            body = request.json
 
             if 'name' not in body:
                 list_errors.append('name is required')
@@ -202,17 +202,26 @@ def create_app(test_config=None):
                 db.session.commit()
         except Exception as e:
             db.session.rollback()
-            print("e: ", e)
+            print("error: ", e)
             print("sys.exc_info(): ", sys.exc_info())
             error_code = 500
 
-        
+
         if error_code == 400:
-            return jsonify({'success': False, 'message': 'Error creating department', 'errors': list_errors}), error_code
-        elif error_code == 500:
-            return jsonify({'success': False, 'message': 'Internal Server Error'}), error_code
+            return jsonify({
+                'success': False, 
+                'message': 'Error creating department', 'errors': list_errors
+            }), error_code
+        elif error_code != 201:
+            abort(error_code)
         else:
-            return jsonify({'success': True, 'id': department.id, 'name':department.name, 'short_name':department.short_name ,'message': 'Department created successfully'}), 201
+            return jsonify({
+                'success': True, 
+                 'id': department.id, 
+                 'name':department.name, 
+                 'short_name':department.short_name ,
+                 'message': 'Department created successfully'
+                 }), 201
 
     @app.route('/departments/<id>', methods=['PATCH'])
     def update_department(id):
@@ -244,6 +253,16 @@ def create_app(test_config=None):
         db.session.close()
 
         return jsonify({'success': True,'message': 'Departamento eliminado exitosamente'})
+
+
+    @app.errorhandler(500)
+    def internal_server_error(e):
+        return jsonify({
+            'success': False, 
+            'message': 'Internal Server Error'
+        }), 500
+    
+
 
     return app
 
