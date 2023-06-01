@@ -121,25 +121,43 @@ def create_app(test_config=None):
 
     @app.route('/employees/<id>', methods=['PATCH'])
     def update_employee(id):
-        employee = Employee.query.get(id)
+        returned_code = 200
+        try:
+            employee = Employee.query.get(id)
 
-        if not employee:
-            return jsonify({'success':False,'message': 'Empleado no encontrado'}), 404
+            if not employee:
+                returned_code = 404
 
-        data = request.form
+            data = request.form
 
-        if 'first_name' in data:
-            employee.first_name = data['first_name']
-        if 'last_name' in data:
-            employee.last_name = data['last_name']
-        if 'job_title' in data:
-            employee.job_title = data['job_title']
-        if 'selectDepartment' in data:
-            employee.department_id = data['selectDepartment']
-        db.session.commit()
-        db.session.close()
+            if 'first_name' in data:
+                employee.first_name = data['first_name']
 
-        return jsonify({'success':True,'message': 'Empleado actualizado correctamente'}), 200
+            if 'last_name' in data:
+                employee.last_name = data['last_name']
+
+            if 'job_title' in data:
+                employee.job_title = data['job_title']
+
+            if 'selectDepartment' in data:
+                employee.department_id = data['selectDepartment']
+
+            db.session.commit()
+            db.session.close()
+            
+        except Exception as e:
+            print("e: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
+            db.session.rollback()
+
+
+        if returned_code != 200:
+            abort(returned_code)
+        else:
+            return jsonify({
+                'success':True,
+                'message': 'Empleado actualizado correctamente'
+                }), 200
 
     @app.route('/employees/<id>', methods=['DELETE'])
     def delete_employee(id):
@@ -261,6 +279,13 @@ def create_app(test_config=None):
             'success': False, 
             'message': 'Internal Server Error'
         }), 500
+    
+    @app.errorhandler(404)
+    def not_found_error(e):
+        return jsonify({
+            'success': False,
+            'message': 'Not Found'
+        }), 404
     
 
 
