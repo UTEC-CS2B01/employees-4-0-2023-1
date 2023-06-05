@@ -26,43 +26,33 @@ def create_app(test_config=None):
     
     @app.route('/employees', methods=['POST'])
     def create_employee():
-        error_code = 200
+        error_code = 201
         list_errors = []
         try:
             body = request.form
 
             if 'first_name' not in body:
                 list_errors.append('first_name is required')
-            else:
-                first_name = request.form.get('first_name')
 
             if 'last_name' not in body:
                 list_errors.append('last_name is required')
-            else:
-                last_name = request.form.get('last_name')
 
             if 'job_title' not in body:
                 list_errors.append('job_title is required')
-            else:
-                job_title = request.form.get('job_title')
 
             if 'selectDepartment' not in body:
                 list_errors.append('selectDepartment is required')
-            else:
-                department_id = request.form.get('selectDepartment')
 
             if 'image' not in request.files:
-                print('image is required')
                 list_errors.append('image is required')
             else:
                 file = request.files['image']
 
                 if file.filename == '':
                     list_errors.append('filename should not be empty')
-                
+
                 if not allowed_file(file.filename):
                     list_errors.append('File extension not allowed')
-            
 
             if len(list_errors) > 0:
                 error_code = 400
@@ -70,11 +60,11 @@ def create_app(test_config=None):
                 employee = Employee(first_name, last_name, job_title, department_id)
                 db.session.add(employee)
                 db.session.commit()
-                employeeid_created = employee.id
-                
+                employee_id_created = employee.id
+
                 cwd = os.getcwd()
 
-                employee_dir = os.path.join(app.config['UPLOAD_FOLDER'], employee.id)
+                employee_dir = os.path.join(app.config['UPLOAD_FOLDER'], str(employee_id_created))
                 os.makedirs(employee_dir, exist_ok=True)
 
                 upload_folder = os.path.join(cwd, employee_dir)
@@ -87,18 +77,26 @@ def create_app(test_config=None):
 
                 employee.image_path = relative_path
                 db.session.commit()
+
         except Exception as e:
             db.session.rollback()
-            print("e: ", e)
-            print("sys.exc_info(): ", sys.exc_info())
-            error_code = 500
+            print("e:", e)
+            return jsonify({'success': False, 'message': 'Error creating employee', 'errors': list_errors}), 400
 
         if error_code == 400:
             return jsonify({'success': False, 'message': 'Error creating employee', 'errors': list_errors}), error_code
-        elif error_code == 500:
-            return jsonify({'success': False, 'message': 'Internal Server Error'}), error_code
+        elif error_code != 201:
+            abort(error_code)
         else:
-            return jsonify({'success': True, 'id': employeeid_created, 'message': 'Employee created successfully'}), 201
+            return jsonify({
+                'success': True,
+                'id': employee_id_created,
+                'first_name': first_name,
+                'last_name': last_name,
+                'job_title': job_title,
+                'message': 'Employee created successfully'
+            }), 201
+
 
     @app.route('/employees', methods=['GET'])
     def get_employees():
@@ -290,4 +288,3 @@ def create_app(test_config=None):
 
 
     return app
-

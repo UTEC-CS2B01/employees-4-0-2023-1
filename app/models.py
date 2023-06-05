@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
-from config.default import config
-
+config = {
+    'DATABASE_URI': 'postgresql://postgres:1234@localhost:5432/christian',
+}
 from datetime import datetime
 import uuid
 
