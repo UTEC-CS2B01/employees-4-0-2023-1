@@ -62,8 +62,8 @@ def create_app(test_config=None):
                 
         except Exception as e:
             db.session.rollback()
-            #print("error: ", e)
-            #print("sys.exc_info(): ", sys.exc_info())
+            print("error: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
             error_code = 500
 
         if error_code == 400:
@@ -89,8 +89,8 @@ def create_app(test_config=None):
                 employees = Employee.query.filter_by(is_active=True).order_by(Employee.first_name).all()
             
         except Exception as e:
-            #print("error: ", e)
-            #print("sys.exc_info(): ", sys.exc_info())
+            print("error: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
             db.session.rollback()
             error_code = 500
         
@@ -131,8 +131,8 @@ def create_app(test_config=None):
             db.session.close()
             
         except Exception as e:
-            #print("error: ", e)
-            #print("sys.exc_info(): ", sys.exc_info())
+            print("error: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
             db.session.rollback()
 
 
@@ -159,8 +159,8 @@ def create_app(test_config=None):
             db.session.close()
 
         except Exception as e:
-            #print("error: ", e)
-            #print("sys.exc_info(): ", sys.exc_info())
+            print("error: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
             db.session.rollback()
         
         if returned_code != 200:
@@ -184,8 +184,8 @@ def create_app(test_config=None):
                 departments = Department.query.order_by(Department.short_name).all()
 
         except Exception as e:
-            #print("error: ", e)
-            #print("sys.exc_info(): ", sys.exc_info())
+            print("error: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
             db.session.rollback()
             error_code = 500
         
@@ -223,8 +223,8 @@ def create_app(test_config=None):
                 db.session.commit()
         except Exception as e:
             db.session.rollback()
-            #print("error: ", e)
-            #print("sys.exc_info(): ", sys.exc_info())
+            print("error: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
             error_code = 500
 
 
@@ -264,8 +264,8 @@ def create_app(test_config=None):
             db.session.close()
 
         except Exception as e:
-            #print("error: ", e)
-            #print("sys.exc_info(): ", sys.exc_info())
+            print("error: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
             db.session.rollback()
             error_code = 500
 
@@ -290,8 +290,8 @@ def create_app(test_config=None):
             db.session.commit()
             db.session.close()
         except Exception as e:
-            #print("error: ", e)
-            #print("sys.exc_info(): ", sys.exc_info())
+            print("error: ", e)
+            print("sys.exc_info(): ", sys.exc_info())
             db.session.rollback()
             error_code = 500
 

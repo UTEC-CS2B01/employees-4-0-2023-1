@@ -4,7 +4,7 @@ from app import create_app
 from config.test import config
 import json
 
-class TestsDepartments(unittest.TestCase):
+class TestsMantenimiento(unittest.TestCase):
 
     def setUp(self):
         database_qa = config['DATABASE_URI']
@@ -16,11 +16,29 @@ class TestsDepartments(unittest.TestCase):
             'short_name': 'TI'
         }
 
+        self.updated_department = {
+            'name': 'Devops Operation',
+            'short_name': 'devops'
+        }
+
         self.new_failed_department = {
             'name': 'Information Technology'
         }
 
+        self.new_employee = {
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'job_title': 'Software Engineer',
+        }
 
+        # 0. Crear un departamento
+        response_dpto = self.client.post('/departments', json=self.new_department)
+        dpto_data = response_dpto.get_json()
+
+        self.dpto_id = dpto_data['id']
+
+
+    ####departments#####
     def test_create_department_success(self):
         response = self.client.post('/departments', json=self.new_department)
         data = json.loads(response.data)
@@ -28,6 +46,8 @@ class TestsDepartments(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['id'])
+
+        self.client.delete('/departments/{}'.format(data['id']))
 
     def test_create_department_failed_400(self):
         response = self.client.post('/departments', json=self.new_failed_department)
@@ -38,31 +58,36 @@ class TestsDepartments(unittest.TestCase):
         self.assertEqual(data['message'], 'Error creating department')
         self.assertTrue(data['errors'])
 
+
+    def test_update_department_success(self):        
+        response = self.client.patch('/departments/{}'.format(self.dpto_id), json=self.updated_department)
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+
     def test_create_department_failed_500(self):
         response = self.client.post('/departments', json={'name': None, 'short_name': None})
         data = json.loads(response.data)
+
         self.assertEqual(response.status_code, 500)
-    
-
-    def tearDown(self):
-        pass
+        self.assertEquals(data['success'], False)
 
 
-class TestEmployees(unittest.TestCase):
+    def test_delete_department_success(self):
+        response = self.client.delete('/departments/{}'.format(self.dpto_id))
+        data = json.loads(response.data)
 
-    def setUp(self):
-        database_qa = config['DATABASE_URI']
-        self.app = create_app({ 'database_qa': database_qa })
-        self.client = self.app.test_client()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
 
-        self.new_employee = {
-            'first_name': 'John',
-            'last_name': 'Doe',
-            'job_title': 'Software Engineer',
-            'selectDepartment': '067551db-003d-49a2-a3c9-b746b7b0aea6'
-        }
 
+
+    ####employees#####
     def test_create_employee_success(self):
+        self.new_employee['selectDepartment'] = self.dpto_id
+
         response = self.client.post('/employees', json=self.new_employee)
         data = response.get_json()
 
@@ -107,6 +132,8 @@ class TestEmployees(unittest.TestCase):
         self.assertTrue(data['total'])
 
     def test_update_employee(self):
+        self.new_employee['selectDepartment'] = self.dpto_id
+
         # 1. Crear un empleado
         create_response = self.client.post('/employees', json=self.new_employee)
         create_data = create_response.get_json()
@@ -126,6 +153,8 @@ class TestEmployees(unittest.TestCase):
         self.assertEqual(update_data['message'], 'Empleado actualizado correctamente')
 
     def test_delete_employee(self):
+        self.new_employee['selectDepartment'] = self.dpto_id
+
         # 1. Crear un empleado
         create_response = self.client.post('/employees', json=self.new_employee)
         create_data = create_response.get_json()
@@ -140,4 +169,4 @@ class TestEmployees(unittest.TestCase):
         self.assertEqual(delete_data['message'], 'Empleado eliminado correctamente')
 
     def tearDown(self):
-        pass
+        self.client.delete('/departments/{}'.format(self.dpto_id))
