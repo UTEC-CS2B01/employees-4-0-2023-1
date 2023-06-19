@@ -170,6 +170,7 @@ def create_app(test_config=None):
                             'message': 'Empleado eliminado correctamente'
                             }), returned_code
 
+
     @app.route('/departments', methods=['GET'])
     def get_departments():
         error_code = 200
