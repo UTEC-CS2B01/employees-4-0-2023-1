@@ -1,8 +1,10 @@
 <template>
   <div>
     <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/department-creation">Department Creation</router-link> |
+      <router-link to="/department-list">Department List</router-link> |
+      <router-link to="/employee-creation">Employee Creation</router-link> |
+      <router-link to="/employee-list">Employee List</router-link>
     </nav>
     <router-view />
   </div>

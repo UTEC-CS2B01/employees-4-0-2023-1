@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  name: "DepartmentLists",
+  name: "DepartmentList",
   data() {
     return {
       departments: [],

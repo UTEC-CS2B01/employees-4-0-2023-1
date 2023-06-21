@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="DepartmentCreation">
     <DepartmentCreation />
   </div>
 </template>
@@ -7,7 +7,7 @@
 <script>
 import DepartmentCreation from "@/components/DepartmentCreation.vue";
 export default {
-  name: "HomeView",
+  name: "DepartmentCreationView",
   components: {
     DepartmentCreation,
   },

@@ -8,3 +8,10 @@ export const createDepartment = async (department) => {
 
   return data;
 };
+
+export const fetchDepartments = async () => {
+  const { data } = await axios.get(BASE_URL);
+  console.log("data: ", data);
+
+  return data;
+};
