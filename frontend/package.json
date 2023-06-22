@@ -55,7 +55,10 @@
           "jest": true
         }
       }
-    ]
+    ],
+    "rules": {
+      "vue/multi-word-component-names": "off"
+    }
   },
   "browserslist": [
     "> 1%",
