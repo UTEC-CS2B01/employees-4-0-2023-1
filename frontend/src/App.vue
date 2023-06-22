@@ -1,32 +1,37 @@
 <template>
-  <div>
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
-    <router-view />
+  <div class="app-container">
+    <div class="menu">
+      <TheNavigation />
+    </div>
+    <div class="portal">
+      <router-view />
+    </div>
   </div>
 </template>
 
+<script>
+import TheNavigation from "@/views/TheNavigation.vue";
+export default {
+  name: "App",
+  components: {
+    TheNavigation,
+  },
+};
+</script>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+.app-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 
-nav {
-  padding: 30px;
+.menu {
+  flex: 0 0 30%; /* Adjust the width as needed */
+  background-color: transparent;
 }
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
+.portal {
+  flex: 1;
 }
 </style>
