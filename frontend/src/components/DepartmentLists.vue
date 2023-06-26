@@ -10,21 +10,12 @@
 </template>
 
 <script>
-import { getAllDepartments } from "@/services/departments.api";
 export default {
   name: "DepartmentLists",
-  mounted() {
-    this.getDepartments();
-  },
-  data() {
-    return {
-      departments: [],
-    };
-  },
-  methods: {
-    async getDepartments() {
-      const { departments } = await getAllDepartments();
-      this.departments = departments;
+  props: {
+    departments: {
+      type: Array,
+      required: true,
     },
   },
 };
